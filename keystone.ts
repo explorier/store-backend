@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { config, createSchema } from "@keystone-next/keystone/schema";
 import { User } from "./schemas/Users";
+import { Product } from "./schemas/Product";
 import { ProductImage } from "./schemas/ProductImage";
 import { createAuth } from "@keystone-next/auth";
 import {
@@ -42,6 +43,7 @@ export default withAuth(
     lists: createSchema({
       //schema items go in here
       User,
+      Product,
       ProductImage,
     }),
     ui: {
