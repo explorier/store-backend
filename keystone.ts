@@ -3,6 +3,7 @@ import { config, createSchema } from "@keystone-next/keystone/schema";
 import { User } from "./schemas/Users";
 import { Product } from "./schemas/Product";
 import { ProductImage } from "./schemas/ProductImage";
+import { CartItem } from "./schemas/CartItem";
 import { createAuth } from "@keystone-next/auth";
 import {
   withItemData,
@@ -58,6 +59,7 @@ export default withAuth(
       User,
       Product,
       ProductImage,
+      CartItem,
     }),
     ui: {
       //Show the UI only for people who pass this test
