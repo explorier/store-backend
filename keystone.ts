@@ -1,20 +1,22 @@
-import "dotenv/config";
-import { config, createSchema } from "@keystone-next/keystone/schema";
-import { User } from "./schemas/Users";
-import { Product } from "./schemas/Product";
-import { ProductImage } from "./schemas/ProductImage";
-import { CartItem } from "./schemas/CartItem";
-import { createAuth } from "@keystone-next/auth";
+import { createAuth } from '@keystone-next/auth';
+import { config, createSchema } from '@keystone-next/keystone/schema';
 import {
   withItemData,
   statelessSessions,
-} from "@keystone-next/keystone/session";
-import { insertSeedData } from "./seed-data";
-import { sendPasswordResetEmail } from "./lib/mail";
-import { extendGraphqlSchema } from "./mutations";
+} from '@keystone-next/keystone/session';
+import { CartItem } from './schemas/CartItem';
+import { ProductImage } from './schemas/ProductImage';
+import { Product } from './schemas/Product';
+import { User } from './schemas/Users';
+import 'dotenv/config';
+import { insertSeedData } from './seed-data';
+import { sendPasswordResetEmail } from './lib/mail';
+import { extendGraphqlSchema } from './mutations';
+
+function check(name: string) {}
 
 const databaseURL =
-  process.env.DATABASE_URL || "mongodb://localhost/keystone-sick-fits-tutorial";
+  process.env.DATABASE_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
 
 const sessionConfig = {
   maxAge: 60 * 60 * 24 * 360, // How long they stay signed in?
@@ -22,16 +24,16 @@ const sessionConfig = {
 };
 
 const { withAuth } = createAuth({
-  listKey: "User",
-  identityField: "email",
-  secretField: "password",
+  listKey: 'User',
+  identityField: 'email',
+  secretField: 'password',
   initFirstItem: {
-    fields: ["name", "email", "password"],
-    // TODO: Add in initial roles here
+    fields: ['name', 'email', 'password'],
+    // TODO: Add in inital roles here
   },
   passwordResetLink: {
     async sendToken(args) {
-      //send the email
+      // send the email
       await sendPasswordResetEmail(args.token, args.identity);
     },
   },
@@ -39,6 +41,7 @@ const { withAuth } = createAuth({
 
 export default withAuth(
   config({
+    // @ts-ignore
     server: {
       cors: {
         origin: [process.env.FRONTEND_URL],
@@ -46,17 +49,17 @@ export default withAuth(
       },
     },
     db: {
-      adapter: "mongoose",
+      adapter: 'mongoose',
       url: databaseURL,
-      // TODO: Add data seeding here
       async onConnect(keystone) {
-        if (process.argv.includes("--seed-data")) {
+        console.log('Connected to the database!');
+        if (process.argv.includes('--seed-data')) {
           await insertSeedData(keystone);
         }
       },
     },
     lists: createSchema({
-      //schema items go in here
+      // Schema items go in here
       User,
       Product,
       ProductImage,
@@ -64,15 +67,14 @@ export default withAuth(
     }),
     extendGraphqlSchema,
     ui: {
-      //Show the UI only for people who pass this test
-      isAccessAllowed: ({ session }) => {
-        console.log(session);
-        return !!session?.data;
-      },
+      // Show the UI only for poeple who pass this test
+      isAccessAllowed: ({ session }) =>
+        // console.log(session);
+        !!session?.data,
     },
-    // TODO: Add session values here
     session: withItemData(statelessSessions(sessionConfig), {
-      User: `id`,
+      // GraphQL Query
+      User: 'id name email',
     }),
   })
 );
