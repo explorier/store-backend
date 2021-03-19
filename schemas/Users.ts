@@ -21,5 +21,6 @@ export const User = list({
         itemView: { fieldMode: "read" },
       },
     }),
+    orders: relationship({ ref: "Order.user", many: true }),
   },
 });
